@@ -17,7 +17,17 @@ function gc_ping() {
         $gc = gc();
         $gc->api->status();
         return $gc->client->response->ok();
-    } catch (\Exception $e) {
-        return false;
-    }
+    } catch (Exception $e) {}
+
+    return false;
+}
+
+function gc_ping_node($id) {
+    try {
+        $gc = gc();
+        $gc->api->getNode($id);
+        return $gc->client->response->ok();
+    } catch (Exception $e) {}
+
+    return false;
 }
