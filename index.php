@@ -15,4 +15,6 @@ use GraphCommons\Graph\Graph;
 use GraphCommons\Graph\Signal;
 use GraphCommons\Graph\SignalCollection;
 
-prd(gc_ping());
+// prd(gc_ping());
+prd(gc_ping_node('8dcbb598-be52-6531-156a-4b637c6ea001'));
+
