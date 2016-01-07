@@ -26,8 +26,12 @@ $nid = '8dcbb598-be52-6531-156a-4b637c6ea001';
 // sleep(1);
 // prd(gc_ping_node($nid));
 
-
 // $data = gc_db_get_repo('froq');
 // pre($data);
 // $data['commits'][] = '123';
 // prd(gc_db_put_repo('froq', $data));
+
+// $data = gc_db_get_user('qeremy');
+// pre($data);
+// $data['repos'][] = 'foo';
+// prd(gc_db_put_user('qeremy', $data));
