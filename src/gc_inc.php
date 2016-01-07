@@ -5,7 +5,7 @@ function pre($input, $exit = false){
         printf("NULL\n");
     } else {
         $input = print_r($input, true);
-        $input = preg_replace('~\[(\w+):.+(\\\\?.*?):private\]~sm', '[\\1:private]', $input);
+        $input = preg_replace('~\[(\w+):GraphCommons(\\\\?.*?):private\]~sm', '[\\1:private]', $input);
         printf("%s\n", $input);
     }
     if ($exit) {
