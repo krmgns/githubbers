@@ -20,6 +20,7 @@ function gc_db_find_commit($id) {
 
 function gc_db_save_repo(array $data) {
     global $db;
+    $data['type'] = 'repo';
     $db->createDocument($data);
     if (201 != $db->client->response->getStatusCode()) {
         return null;
