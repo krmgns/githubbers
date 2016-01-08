@@ -1,8 +1,5 @@
 <?php defined('APIKEY') or die('...');
 
-$autoload = require('./src/graphcommons-php/GraphCommons/Autoload.php');
-$autoload->register();
-
 use GraphCommons\GraphCommons;
 
 function gc() {

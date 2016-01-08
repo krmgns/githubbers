@@ -4,10 +4,17 @@ header('content-type: text/plain; charset=utf-8');
 // hey!
 chdir(__dir__);
 
+$autoload = require('./src/couch-php/Couch/Autoload.php');
+$autoload->register();
+
+$autoload = require('./src/graphcommons-php/GraphCommons/Autoload.php');
+$autoload->register();
+
 // api cred.
 define('APIKEY', file_get_contents('./.apikey'));
 
 require('./src/gc_inc.php');
+require('./src/gc_curl.php');
 require('./src/gc_db.php');
 require('./src/gc.php');
 
@@ -35,3 +42,10 @@ $nid = '8dcbb598-be52-6531-156a-4b637c6ea001';
 // pre($data);
 // $data['repos'][] = 'foo';
 // prd(gc_db_put_user('qeremy', $data));
+
+// GET /repos/:user/:repo/commits
+
+$user = 'qeremy';
+$repo = 'froq/froq';
+$commits = gc_github_commits($repo);
+pre($commits);
