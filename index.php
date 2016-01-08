@@ -29,19 +29,19 @@ use GraphCommons\Graph\SignalCollection;
 $uid = '80a43f69-1882-254e-6242-4e9f5d5ace4d';
 $nid = '8dcbb598-be52-6531-156a-4b637c6ea001';
 
-$commits = gc_github_commits('froq/froq');
-pre($commits);
+// $commits = gc_github_commits('froq/froq');
+// pre($commits);
 
-$repoData = gc_db_find_repo('froq/froq');
-if (empty($repo)) {
-    $repoData = gc_db_save_repo([
-        '_id'     => 'froq/froq',
-        'name'    => 'Froq',
-        'desc'    => 'Just a web service framework..',
-        'commits' => [],
-    ]);
-}
-pre($repoData);
+// $repoData = gc_db_find_repo('froq/froq');
+// if (empty($repo)) {
+//     $repoData = gc_db_save_repo([
+//         '_id'     => 'froq/froq',
+//         'name'    => 'Froq',
+//         'desc'    => 'Just a web service framework..',
+//         'commits' => [],
+//     ]);
+// }
+// pre($repoData);
 
-$commitData = gc_db_find_commit('4eb51782d8d28f641be99f774f1f297e5e7be6f4');
-pre($commitData);
+// $commitData = gc_db_find_commit('4eb51782d8d28f641be99f774f1f297e5e7be6f4');
+// pre($commitData);
