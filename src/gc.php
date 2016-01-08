@@ -28,3 +28,11 @@ function gc_ping_node($id) {
 
     return false;
 }
+
+function gc_github_commits($path, $page = 1, $pageLimit = 1) {
+    $query = [];
+    if ($page) $query['page'] = $page;
+    if ($pageLimit) $query['per_page'] = $pageLimit;
+
+    return gc_curl_get("/repos/{$path}/commits", $query);
+}
