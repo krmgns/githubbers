@@ -27,3 +27,13 @@ function gc_db_save_repo(array $data) {
     }
     return $data;
 }
+
+function gc_db_save_commit(array $data) {
+    global $db;
+    $data['type'] = 'commit';
+    $db->createDocument($data);
+    if (201 != $db->client->response->getStatusCode()) {
+        return null;
+    }
+    return $data;
+}
