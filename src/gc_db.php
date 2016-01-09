@@ -23,18 +23,18 @@ function gc_db_save_repo(array $data) {
     global $db;
     $data['type'] = 'repo';
     $db->createDocument($data);
-    if (201 != $db->client->response->getStatusCode()) {
-        return null;
+    if ($db->client->response->getStatusCode() == 201) {
+        return $data;
     }
-    return $data;
+    return null;
 }
 
 function gc_db_save_commit(array $data) {
     global $db;
     $data['type'] = 'commit';
     $db->createDocument($data);
-    if (201 != $db->client->response->getStatusCode()) {
-        return null;
+    if ($db->client->response->getStatusCode() == 201) {
+        return $data;
     }
-    return $data;
+    return null;
 }
