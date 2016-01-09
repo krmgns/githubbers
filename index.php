@@ -1,6 +1,4 @@
 <?php
-header('content-type: text/plain; charset=utf-8');
-
 // hey!
 chdir(__dir__);
 
@@ -14,7 +12,7 @@ $autoload->register();
 define('APIKEY', file_get_contents('./.apikey'));
 
 require('./src/gc_inc.php');
-require('./src/gc_curl.php');
+require('./src/gc_github.php');
 require('./src/gc_db.php');
 require('./src/gc.php');
 
@@ -23,25 +21,51 @@ use GraphCommons\Graph\Graph;
 use GraphCommons\Graph\Signal;
 use GraphCommons\Graph\SignalCollection;
 
-// prd(gc_ping());
+if (PHP_SAPI != 'cli') {
+    die("Available on via CLI!\n");
+}
 
-// @test (froq)
-$uid = '80a43f69-1882-254e-6242-4e9f5d5ace4d';
-$nid = '8dcbb598-be52-6531-156a-4b637c6ea001';
+$opt = getopt('r:p:');
+if (!isset($opt['r'])) {
+    die("Usage: -r <org|user/repo> \n");
+}
+// pre($opt,1);
 
-// $commits = gc_github_commits('froq/froq');
-// pre($commits);
+// get repo id
+$repoId = $opt['r'];
 
-// $repoData = gc_db_find_repo('froq/froq');
-// if (empty($repo)) {
-//     $repoData = gc_db_save_repo([
-//         '_id'     => 'froq/froq',
-//         'name'    => 'Froq',
-//         'desc'    => 'Just a web service framework..',
-//         'commits' => [],
-//     ]);
-// }
-// pre($repoData);
+// set page
+$page = 1;
+if (isset($opt['p'])) {
+    $page = $opt['p'];
+}
 
-// $commitData = gc_db_find_commit('4eb51782d8d28f641be99f774f1f297e5e7be6f4');
-// pre($commitData);
+while (true) {
+    // $commit = gc_github_repo_commits($repoId, $page)[0] ?? null;
+    // if (empty($commit)) {
+    //     die("No more commits!\n");
+    // }
+    // pre($commit);
+
+    $repoData = gc_db_find_repo($repoId);
+    if (empty($repoData)) {
+        $repo = gc_github_repo($repoId);
+        if (isset($repo['id'])) {
+            $repoData['name'] = $repoId;
+            $repoData['link'] = $repo['html_url'];
+            $repoData['desc'] = $repo['description'];
+            $repoData['avatar'] = $repo['owner']['avatar_url'];
+        }
+        // pre($repoData,1);
+        // $repoData = gc_db_save_repo($repoData);
+    }
+    pre($repoData);
+
+    // $commitData = gc_db_find_commit('4eb51782d8d28f641be99f774f1f297e5e7be6f4');
+    // pre($commitData);
+
+    print "Sleeping for 5 seconds..\n";
+    // sleep(5);
+
+    break;
+}

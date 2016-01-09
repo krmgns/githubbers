@@ -1,13 +1,14 @@
-<?php
+<?php defined('APIKEY') or die('...');
+
 $dbCouch  = new Couch\Couch();
 $dbClient = new Couch\Client($dbCouch);
 $db       = new Couch\Database($dbClient, 'githubbers');
 
 function gc_db_find_doc($id) {
     global $db;
-    $d= (new Couch\Document($db, ['_id' => $id]))->find();
-    pre($db->client->request->toString());
-    return $d;
+    $doc = (new Couch\Document($db, ['_id' => $id]))->find();
+    // pre($db->client->request->toString());
+    return $doc;
 }
 
 function gc_db_find_repo($id) {
