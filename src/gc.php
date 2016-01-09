@@ -5,7 +5,7 @@ use GraphCommons\Graph\Graph;
 use GraphCommons\Graph\Signal;
 use GraphCommons\Graph\SignalCollection;
 
-$gc = new GraphCommons(API_KEY_GC);
+$gc = new GraphCommons(API_KEY_GC, ['debug' => true]);
 
 function gc_ping() {
     global $gc;
@@ -27,103 +27,103 @@ function gc_ping_node($id) {
     return false;
 }
 
-function gc_add_repo_node(array $data) {
-    global $gc;
+function gc_add_repo_node(array $repoData) {
+    global $gc; $return = true;
     try {
-        $gc->api->addGraphSignal(GRAPH_ID, SignalCollection::fromArray(array(
-            array(
-                'action'          => Signal::NODE_CREATE,
-                'parameters'      => array(
-                    'name'        => $data['name'],
-                    'type'        => 'Repository',
-                    'description' => $data['desc'],
-                    'image'       => $data['avatar'],
-                    'reference'   => $data['link'],
-                ),
-            ),
-            array(
-                'action'          => Signal::EDGE_CREATE,
-                'parameters'      => array(
-                    'from_name'   => $data['name'],
-                    'from_type'   => 'Repository',
-                    'to_name'     => 'Github',
-                    'to_type'     => 'Github',
-                    'name'        => 'REPOSITORY',
-                ),
-            ),
-        )));
-        return true; // success
-    } catch (Exception $e) {}
-    return false; // failure
+        $repoId = $repoData['_id'];
+        $array = []; $i = 0;
+        $array[$i]['action']     = Signal::NODE_CREATE;
+        $array[$i]['parameters'] = [
+            'name'           => $repoId,
+            'type'           => 'Repository',
+            'description'    => $repoData['desc'],
+            'image'          => $repoData['avatar'],
+            'reference'      => $repoData['link'],
+        ];
+        $i++;
+        $array[$i]['action']     = Signal::EDGE_CREATE;
+        $array[$i]['parameters'] = [
+            'from_name'      => $repoId,
+            'from_type'      => 'Repository',
+            'to_name'        => 'Github',
+            'to_type'        => 'Github',
+            'name'           => 'REPOSITORY',
+        ];
+        if (!empty($repoData['langs'])) foreach ($repoData['langs'] as $langName => $langCodes) {
+            $i++;
+            $array[$i]['action']     = Signal::NODE_CREATE;
+            $array[$i]['parameters'] = [
+                'name'           => $langName,
+                'type'           => 'Language',
+                'description'    => $langCodes,
+            ];
+            $i++;
+            $array[$i]['action']     = Signal::EDGE_CREATE;
+            $array[$i]['parameters'] = [
+                'from_name'      => $langName,
+                'from_type'      => 'Language',
+                'to_name'        => $repoId,
+                'to_type'        => 'Repository',
+                'name'           => 'LANGUAGE',
+            ];
+        }
+        // pre($array,1);
+        $gc->api->addGraphSignal(GRAPH_ID, SignalCollection::fromArray($array));
+    } catch (Exception $e) { $return = false; }
+
+    return $return;
 }
 
-function gc_add_user_node(array $data, array $dataTo) {
-    global $gc;
+function gc_add_commit_node($repoId, array $userData, array $commitData) {
+    global $gc; $return = true;
     try {
-        $gc->api->addGraphSignal(GRAPH_ID, SignalCollection::fromArray(array(
-            array(
-                'action'          => Signal::NODE_CREATE,
-                'parameters'      => array(
-                    'name'        => '@'. $data['_id'],
-                    'type'        => 'Githubber',
-                    'description' => $data['name'] .' (@'. $data['username'] .')',
-                    'image'       => $data['avatar'],
-                    'reference'   => $data['link'],
-                ),
-            ),
-            array(
-                'action'          => Signal::EDGE_CREATE,
-                'parameters'      => array(
-                    'from_name'   => '@'. $data['_id'],
-                    'from_type'   => 'Githubber',
-                    'to_name'     => $dataTo['_id'],
-                    'to_type'     => 'Repository',
-                    'name'        => 'CONTRIBUTION',
-                ),
-            ),
-        )));
-        return true; // success
-    } catch (Exception $e) {}
-    return false; // failure
-}
+        $userId   = '@'. $userData['_id'];
+        $commitId = '#'. $commitData['_id'];
+        $array = []; $i = 0;
+        // commit
+        $array[$i]['action']      = Signal::NODE_CREATE;
+        $array[$i]['parameters']  = [
+            'name'        => $commitId,
+            'type'        => 'Commit',
+            'description' => $commitData['message'],
+            'image'       => 'https://cdn0.iconfinder.com/data/icons/octicons/1024/git-commit-128.png',
+            'reference'   => $commitData['link'],
+        ];
+        $i++;
+        // commit edge
+        $array[$i]['action']      = Signal::EDGE_CREATE;
+        $array[$i]['parameters']  = [
+            'from_name'   => $commitId,
+            'from_type'   => 'Commit',
+            'to_name'     => $repoId,
+            'to_type'     => 'Repository',
+            'name'        => 'COMMIT',
+        ];
+        $i++;
+        // user
+        if (isset($userData['name'])) {
+            $array[$i]['action']      = Signal::NODE_CREATE;
+            $array[$i]['parameters']  = [
+                'name'        => $userId,
+                'type'        => 'Githubber',
+                'description' => $userData['name'] .' ('. $userId .')',
+                'image'       => $userData['avatar'],
+                'reference'   => $userData['link'],
+            ];
+        }
+        $i++;
+        // user edge
+        $array[$i]['action']            = Signal::EDGE_CREATE;
+        $array[$i]['parameters']        = [
+            'from_name'   => $userId,
+            'from_type'   => 'Githubber',
+            'to_name'     => $commitId,
+            'to_type'     => 'Commit',
+            'name'        => 'CONTRIBUTION',
+        ];
 
-function gc_add_commit_node(array $data, array $dataTo) {
-    global $gc;
-    try {
-        $gc->api->addGraphSignal(GRAPH_ID, SignalCollection::fromArray(array(
-            array(
-                'action'          => Signal::NODE_CREATE,
-                'parameters'      => array(
-                    'name'        => '#'. $data['_id'],
-                    'type'        => 'Commit',
-                    'description' => $data['message'],
-                    'image'       => 'https://cdn0.iconfinder.com/data/icons/octicons/1024/git-commit-128.png',
-                    'reference'   => $data['link'],
-                ),
-            ),
-            array(
-                'action'          => Signal::EDGE_CREATE,
-                'parameters'      => array(
-                    'from_name'   => '#'. $data['_id'],
-                    'from_type'   => 'Commit',
-                    'to_name'     => '@'. $dataTo['_id'],
-                    'to_type'     => 'Githubber',
-                    'name'        => 'COMMIT',
-                ),
-            ),
-            // bunu bir de repo'ya bagla
-            // array(
-            //     'action'          => Signal::EDGE_CREATE,
-            //     'parameters'      => array(
-            //         'from_name'   => '@'. $data['_id'],
-            //         'from_type'   => 'Githubber',
-            //         'to_name'     => repo _id,
-            //         'to_type'     => 'Repository',
-            //         'name'        => 'CONTRIBUTION',
-            //     ),
-            // ),
-        )));
-        return true; // success
-    } catch (Exception $e) {}
-    return false; // failure
+        $gc->api->addGraphSignal(GRAPH_ID, SignalCollection::fromArray($array));
+    } catch (Exception $e) { $return = false; }
+
+    return $return;
 }

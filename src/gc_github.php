@@ -31,7 +31,10 @@ function gc_github_get($uri, $urip = null) {
 }
 
 function gc_github_repo($path) {
-    return gc_github_get("/repos/{$path}");
+    $return = gc_github_get("/repos/{$path}");
+    $return['langs'] = gc_github_get("/repos/{$path}/languages");
+
+    return $return;
 }
 
 function gc_github_repo_commits($path, $page = 1, $pageLimit = 1) {
