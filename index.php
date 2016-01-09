@@ -50,7 +50,7 @@ if (isset($opt['s'])) {
 }
 
 while (true) {
-    $page++;
+    ++$page;
 
     print ">> Process for page #{$page}.\n";
 

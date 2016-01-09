@@ -111,6 +111,17 @@ function gc_add_commit_node(array $data, array $dataTo) {
                     'name'        => 'COMMIT',
                 ),
             ),
+            // bunu bir de repo'ya bagla
+            // array(
+            //     'action'          => Signal::EDGE_CREATE,
+            //     'parameters'      => array(
+            //         'from_name'   => '@'. $data['_id'],
+            //         'from_type'   => 'Githubber',
+            //         'to_name'     => repo _id,
+            //         'to_type'     => 'Repository',
+            //         'name'        => 'CONTRIBUTION',
+            //     ),
+            // ),
         )));
         return true; // success
     } catch (Exception $e) {}
