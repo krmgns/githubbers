@@ -4,7 +4,7 @@ require('./src/fsurl/FSUrl/FSUrlException.php');
 require('./src/fsurl/FSUrl/FSUrl.php');
 
 function gc_github_url($uri, $urip = null) {
-    $uri = preg_replace('~(^|[^:])//+~', '\\1/', trim($uri, '/'));
+    $uri = preg_replace('~/+~', '/', trim($uri, '/'));
     if (!empty($urip)) {
         if (is_array($urip)) {
             $urip = http_build_query($urip);
@@ -17,6 +17,7 @@ function gc_github_url($uri, $urip = null) {
 function gc_github_get($uri, $urip = null) {
     $url = gc_github_url($uri, $urip);
     $fsu = new FSUrl($url);
+    $fsu->setRequestHeader('Accept', 'application/json');
     $fsu->setRequestHeader('User-Agent', 'Githubbers v1.0.0-beta (+https://github.com/qeremy/githubbers)');
     $fsu->run();
 
