@@ -1,4 +1,5 @@
-<?php
+<?php defined('ROOT') or die('No root!');
+
 // dump functions
 function pre($input, $exit = false){
     if ($input === null) {

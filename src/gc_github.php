@@ -1,4 +1,4 @@
-<?php defined('APIKEY') or die('...');
+<?php defined('ROOT') or die('No root!');
 
 require('./src/fsurl/FSUrl/FSUrlException.php');
 require('./src/fsurl/FSUrl/FSUrl.php');
@@ -18,6 +18,7 @@ function gc_github_get($uri, $urip = null) {
     $url = gc_github_url($uri, $urip);
     $fsu = new FSUrl($url);
     $fsu->setRequestHeader('Accept', 'application/json');
+    $fsu->setRequestHeader('Authorization', 'token '. API_KEY_GH);
     $fsu->setRequestHeader('User-Agent', 'Githubbers v1.0.0-beta (+https://github.com/qeremy/githubbers)');
     $fsu->run();
 

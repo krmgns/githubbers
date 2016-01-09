@@ -1,4 +1,4 @@
-<?php defined('APIKEY') or die('...');
+<?php defined('ROOT') or die('No root!');
 
 $dbCouch  = new Couch\Couch();
 $dbClient = new Couch\Client($dbCouch);
@@ -19,6 +19,10 @@ function gc_db_find_commit($id) {
     return gc_db_find_doc($id);
 }
 
+function gc_db_find_user($id) {
+    return gc_db_find_doc($id);
+}
+
 function gc_db_save_repo(array $data) {
     global $db;
     $data['type'] = 'repo';
@@ -32,6 +36,16 @@ function gc_db_save_repo(array $data) {
 function gc_db_save_commit(array $data) {
     global $db;
     $data['type'] = 'commit';
+    $db->createDocument($data);
+    if ($db->client->response->getStatusCode() == 201) {
+        return $data;
+    }
+    return null;
+}
+
+function gc_db_save_user(array $data) {
+    global $db;
+    $data['type'] = 'user';
     $db->createDocument($data);
     if ($db->client->response->getStatusCode() == 201) {
         return $data;
