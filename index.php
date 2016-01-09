@@ -5,7 +5,7 @@ chdir(__dir__);
 $autoload = require('./src/couch-php/Couch/Autoload.php');
 $autoload->register();
 
-$autoload = require('./src/graphcommons-php/GraphCommons/Autoload.php');
+$autoload = require('./src/graphcommons-php7/GraphCommons/Autoload.php');
 $autoload->register();
 
 // api cred.
